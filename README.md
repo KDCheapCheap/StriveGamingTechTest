@@ -3,7 +3,7 @@
 #### Frontend
 - ky (https://www.npmjs.com/package/ky) for nicer HTTP requests
 - toastify (https://www.npmjs.com/package/react-toastify) for user messaging
-
+---
 This is a programming exercise using C# (.NET 7), react, typescript and tailwind. 
 
 You have been given two code skeletons. One is for a front end web client, the other is a web API. 
