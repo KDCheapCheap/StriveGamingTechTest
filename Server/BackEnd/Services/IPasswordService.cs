@@ -1,7 +1,9 @@
+using back_end.Models;
+
 namespace back_end.Services;
 
 public interface IPasswordService
 {
-    public bool IsPasswordInvalid(string password);
+    PasswordValidationResponse IsPasswordValid(string password);
     public bool IsPasswordCommon(string password);
 }
