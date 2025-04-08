@@ -1,4 +1,8 @@
 # Programming Exercise v.1.1.0
+### Added Packages
+#### Frontend
+- ky (https://www.npmjs.com/package/ky) for nicer HTTP requests
+- toastify (https://www.npmjs.com/package/react-toastify) for user messaging
 
 This is a programming exercise using C# (.NET 7), react, typescript and tailwind. 
 
