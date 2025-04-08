@@ -20,12 +20,32 @@ public class PasswordController : ControllerBase
     [HttpPost("change")]
     public IActionResult SetPassword(PasswordChangeRequest request)
     {
-        _logger.LogInformation("Received password change request");
+        _logger.LogInformation("Received password change request ");
 
-        if (_passwordService.IsPasswordInvalid(request.Password) ||
-            _passwordService.IsPasswordCommon(request.Password))
+        if (request == null)
         {
-            return BadRequest();
+            _logger.LogWarning("Password change request was null");
+            return BadRequest(new { Message = "Request body cannot be null." });
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Password))
+        {
+            _logger.LogWarning("Password is null or whitespace");
+            return BadRequest(new { Message = "Password cannot be empty." });
+        }
+
+        PasswordValidationResponse validationResponse = _passwordService.IsPasswordValid(request.Password);
+
+        if (!validationResponse.IsValid)
+        {
+            _logger.LogWarning("Password failed complexity requirements. Password: {Password}", request.Password);
+            return BadRequest(new { validationResponse.Message });
+        }
+
+        if (_passwordService.IsPasswordCommon(request.Password))
+        {
+            _logger.LogWarning("Password is too common. Password: {Password}", request.Password);
+            return BadRequest(new { Message = "Password is too common." });
         }
 
         return Ok();

@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import React, { useState } from "react";
+import { changePassword, get } from "../utils/api";
+import { ToastContainer, toast } from 'react-toastify';
 
 export default function Home() {
 
@@ -48,7 +50,44 @@ export default function Home() {
 
     async function handleFormSubmit(e: React.MouseEvent<HTMLButtonElement>) {
         e.preventDefault();
-        console.log('Post password to back end');
+
+        if (!passwordValidation.isValid) {
+            toast.error("Password does not meet requirements.");
+            console.error("Password validation failed.");
+            return;
+        }
+
+        try {
+            const response = await changePassword({ password });
+            console.log('Password changed successfully:', response);
+            toast.success("Password changed successfully.");
+        } 
+        catch (error: any) {
+            if (error.response) {
+                const errorText = await error.response.text();
+                try {
+                    const errorJson = JSON.parse(errorText);
+                    const errorMessage = errorJson.message;
+
+                    console.error('Error message:', errorMessage);
+                    toast.error(`Failed to change password.\n ${errorMessage}`);
+                } 
+                catch (parseError) {
+                    console.error('Failed to parse error response:', parseError);
+                    toast.error('An unexpected error occurred.');
+                }
+            } 
+            else {
+                console.error('Unexpected error:', error);
+                toast.error('An unexpected error occurred.');
+            }
+        }
+    }
+
+    async function test(e: React.MouseEvent<HTMLButtonElement>) {
+        e.preventDefault();
+        const response = await get();
+        console.log('Response from server:', response);
     }
 
     return (
@@ -107,6 +146,12 @@ export default function Home() {
                                 disabled={!passwordValidation.isValid}>
                                 Submit
                             </button>
+
+                            <button
+                                className="flex w-full justify-center px-4 py-2 mt-2 rounded-md text-white bg-gray-400 hover:bg-gray-300 active:bg-gray-200"
+                                onClick={(e) => test(e)}>
+                                Test API
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -133,5 +178,14 @@ export default function Home() {
         </>
     );
 }
+
+//Reuseable Component for validation icon
+const ValidationIcon: React.FC<{ condition: boolean }> = ({ condition }) => {
+    return condition ? (
+        <span className="text-green-500 bi-check-lg"></span>
+    ) : (
+        <span className="text-red-500 bi-x-lg"></span>
+    );
+};
 
 
